@@ -1,9 +1,11 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { generateImageMetadata } from './services/geminiService';
 import { ImageMetadata } from './types';
 import ImageUploader from './components/ImageUploader';
 import MetadataDisplay from './components/MetadataDisplay';
 import Spinner from './components/Spinner';
+import SettingsModal from './components/SettingsModal';
+import SettingsIcon from './components/icons/SettingsIcon';
 
 function App() {
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -11,6 +13,17 @@ function App() {
   const [metadata, setMetadata] = useState<ImageMetadata | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [apiKey, setApiKey] = useState<string>('');
+  const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
+
+  useEffect(() => {
+    const storedApiKey = localStorage.getItem('gemini_api_key');
+    if (storedApiKey) {
+      setApiKey(storedApiKey);
+    } else {
+      setIsSettingsOpen(true); // Prompt for key if not found
+    }
+  }, []);
 
   const handleImageChange = (file: File) => {
     setImageFile(file);
@@ -23,9 +36,22 @@ function App() {
     reader.readAsDataURL(file);
   };
 
+  const handleSaveApiKey = (newApiKey: string) => {
+    setApiKey(newApiKey);
+    localStorage.setItem('gemini_api_key', newApiKey);
+    setIsSettingsOpen(false);
+    setError(null); // Clear previous errors
+  };
+  
   const handleGenerateMetadata = useCallback(async () => {
     if (!imageFile) {
       setError("Please upload an image first.");
+      return;
+    }
+
+    if (!apiKey) {
+      setError("API Key is not set. Please add your key in the settings.");
+      setIsSettingsOpen(true);
       return;
     }
 
@@ -34,7 +60,7 @@ function App() {
     setMetadata(null);
 
     try {
-      const result = await generateImageMetadata(imageFile);
+      const result = await generateImageMetadata(imageFile, apiKey);
       setMetadata(result);
     } catch (e: unknown) {
       if (e instanceof Error) {
@@ -45,11 +71,18 @@ function App() {
     } finally {
       setIsLoading(false);
     }
-  }, [imageFile]);
+  }, [imageFile, apiKey]);
 
   return (
     <div className="min-h-screen font-sans p-4 flex items-center justify-center bg-grid-slate-800/[0.2] [background-image:radial-gradient(ellipse_at_center,rgba(139,92,246,0.1)_0%,transparent_80%)]">
-      <div className="w-full max-w-6xl mx-auto bg-brand-surface rounded-2xl shadow-2xl border border-brand-border backdrop-blur-sm p-6 md:p-8 animate-fade-in-up">
+      <div className="w-full max-w-6xl mx-auto bg-brand-surface rounded-2xl shadow-2xl border border-brand-border backdrop-blur-sm p-6 md:p-8 animate-fade-in-up relative">
+        <button
+          onClick={() => setIsSettingsOpen(true)}
+          className="absolute top-4 right-4 text-brand-text-secondary hover:text-brand-primary transition-colors"
+          aria-label="Open settings"
+        >
+          <SettingsIcon className="w-6 h-6" />
+        </button>
         <header className="text-center mb-8">
           <h1 className="text-4xl sm:text-5xl font-bold text-brand-text mb-2">Image Metadata AI</h1>
           <p className="text-lg text-brand-text-secondary">Instantly generate a name and tags for any image.</p>
@@ -99,6 +132,12 @@ function App() {
           </div>
         </main>
       </div>
+      <SettingsModal 
+        isOpen={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
+        onSave={handleSaveApiKey}
+        currentApiKey={apiKey}
+      />
     </div>
   );
 }

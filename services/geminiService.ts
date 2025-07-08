@@ -1,12 +1,5 @@
-
 import { GoogleGenAI, GenerateContentResponse } from "@google/genai";
 import { ImageMetadata } from '../types';
-
-if (!process.env.API_KEY) {
-  throw new Error("API_KEY environment variable not set");
-}
-
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 const fileToGenerativePart = async (file: File) => {
   const base64EncodedDataPromise = new Promise<string>((resolve) => {
@@ -23,7 +16,13 @@ const fileToGenerativePart = async (file: File) => {
   };
 };
 
-export const generateImageMetadata = async (imageFile: File): Promise<ImageMetadata> => {
+export const generateImageMetadata = async (imageFile: File, apiKey: string): Promise<ImageMetadata> => {
+  if (!apiKey) {
+    throw new Error("API Key is not set. Please add your API key in the settings.");
+  }
+
+  const ai = new GoogleGenAI({ apiKey });
+  
   const imagePart = await fileToGenerativePart(imageFile);
 
   const prompt = `
@@ -73,6 +72,9 @@ Rules for the JSON response:
 
   } catch (error) {
     console.error("Error generating metadata:", error);
+    if (error instanceof Error && error.message.includes('API key not valid')) {
+        throw new Error("Your API key is not valid. Please check it in the settings.");
+    }
     throw new Error("Failed to generate metadata from the image. Please try again.");
   }
 };
