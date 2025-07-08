@@ -1,0 +1,6 @@
+{
+  "name": "Image Metadata Generator",
+  "description": "An application that uses the Gemini API to generate a concise name and relevant tags for any uploaded image, with an option to easily copy the generated metadata.",
+  "requestFramePermissions": [],
+  "prompt": ""
+}
