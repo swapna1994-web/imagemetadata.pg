@@ -1,3 +1,4 @@
+
 import React, { useState, useCallback, useEffect } from 'react';
 import { generateImageMetadata } from './services/geminiService';
 import { ImageMetadata } from './types';
@@ -6,6 +7,8 @@ import MetadataDisplay from './components/MetadataDisplay';
 import Spinner from './components/Spinner';
 import SettingsModal from './components/SettingsModal';
 import SettingsIcon from './components/icons/SettingsIcon';
+import PixelGearIcon from './components/icons/PixelGearIcon';
+import MetadataSettings from './components/MetadataSettings';
 
 function App() {
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -15,6 +18,7 @@ function App() {
   const [error, setError] = useState<string | null>(null);
   const [apiKey, setApiKey] = useState<string>('');
   const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
+  const [metadataLength, setMetadataLength] = useState<'short' | 'detailed'>('short');
 
   useEffect(() => {
     const storedApiKey = localStorage.getItem('gemini_api_key');
@@ -60,7 +64,7 @@ function App() {
     setMetadata(null);
 
     try {
-      const result = await generateImageMetadata(imageFile, apiKey);
+      const result = await generateImageMetadata(imageFile, apiKey, metadataLength);
       setMetadata(result);
     } catch (e: unknown) {
       if (e instanceof Error) {
@@ -71,21 +75,24 @@ function App() {
     } finally {
       setIsLoading(false);
     }
-  }, [imageFile, apiKey]);
+  }, [imageFile, apiKey, metadataLength]);
 
   return (
-    <div className="min-h-screen font-sans p-4 flex items-center justify-center bg-grid-slate-800/[0.2] [background-image:radial-gradient(ellipse_at_center,rgba(139,92,246,0.1)_0%,transparent_80%)]">
-      <div className="w-full max-w-6xl mx-auto bg-brand-surface rounded-2xl shadow-2xl border border-brand-border backdrop-blur-sm p-6 md:p-8 animate-fade-in-up relative">
+    <div className="min-h-screen font-sans p-4 flex items-center justify-center">
+      <div className="w-full max-w-6xl mx-auto bg-brand-surface/60 backdrop-blur-2xl rounded-2xl shadow-2xl border border-white/10 p-6 md:p-8 animate-fade-in-up">
         <button
           onClick={() => setIsSettingsOpen(true)}
-          className="absolute top-4 right-4 text-brand-text-secondary hover:text-brand-primary transition-colors"
+          className="absolute top-4 right-4 text-brand-text-secondary hover:text-brand-primary transition-colors duration-300 z-20"
           aria-label="Open settings"
         >
           <SettingsIcon className="w-6 h-6" />
         </button>
         <header className="text-center mb-8">
-          <h1 className="text-4xl sm:text-5xl font-bold text-brand-text mb-2">Image Metadata AI</h1>
-          <p className="text-lg text-brand-text-secondary">Instantly generate a name and tags for any image.</p>
+          <h1 className="text-4xl sm:text-5xl font-bold text-brand-text mb-3">Image Metadata AI</h1>
+          <div className="flex items-center justify-center space-x-2 text-md text-brand-text-secondary">
+            <PixelGearIcon className="w-5 h-5 text-brand-primary" />
+            <span>Powered by Pixel Gear</span>
+          </div>
         </header>
 
         <main className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -94,7 +101,7 @@ function App() {
             <button
               onClick={handleGenerateMetadata}
               disabled={!imageFile || isLoading}
-              className="w-full bg-brand-primary text-white font-bold text-lg py-3 px-4 rounded-lg shadow-primary hover:bg-brand-primary-hover transition-all duration-300 disabled:bg-slate-600 disabled:shadow-none disabled:cursor-not-allowed flex items-center justify-center"
+              className="w-full bg-brand-primary text-white font-bold text-lg py-3 px-4 rounded-lg shadow-primary hover:bg-brand-primary-hover transition-all duration-300 disabled:bg-brand-surface-lighter disabled:text-brand-text-secondary disabled:shadow-none disabled:cursor-not-allowed flex items-center justify-center transform hover:scale-[1.02] active:scale-[0.98]"
             >
               {isLoading ? (
                 <>
@@ -105,8 +112,14 @@ function App() {
             </button>
           </div>
 
-          <div className="bg-slate-900/50 p-6 rounded-lg shadow-inner min-h-[300px] flex flex-col">
-             <h2 className="text-2xl font-bold text-brand-text mb-4 border-b border-brand-border pb-2">Generated Metadata</h2>
+          <div className="bg-black/30 p-6 rounded-lg shadow-inner min-h-[300px] flex flex-col border border-white/5">
+             <div className="flex justify-between items-center mb-4 border-b border-white/10 pb-2">
+                <h2 className="text-2xl font-bold text-brand-text">Generated Metadata</h2>
+                <MetadataSettings 
+                  selectedLength={metadataLength}
+                  onLengthChange={setMetadataLength}
+                />
+             </div>
             {error && (
               <div className="bg-red-900/50 border border-red-500 text-red-300 p-3 rounded-lg text-center animate-fade-in">
                 <p className="font-semibold">Error</p>

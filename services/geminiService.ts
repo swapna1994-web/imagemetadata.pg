@@ -16,7 +16,11 @@ const fileToGenerativePart = async (file: File) => {
   };
 };
 
-export const generateImageMetadata = async (imageFile: File, apiKey: string): Promise<ImageMetadata> => {
+export const generateImageMetadata = async (
+  imageFile: File, 
+  apiKey: string,
+  length: 'short' | 'detailed'
+): Promise<ImageMetadata> => {
   if (!apiKey) {
     throw new Error("API Key is not set. Please add your API key in the settings.");
   }
@@ -25,6 +29,19 @@ export const generateImageMetadata = async (imageFile: File, apiKey: string): Pr
   
   const imagePart = await fileToGenerativePart(imageFile);
 
+  const promptConstraints = {
+    short: {
+      name: "strictly between 1 and 5 words long",
+      tags: "between 2 and 10 tags",
+    },
+    detailed: {
+      name: "strictly between 5 and 15 words long",
+      tags: "between 20 and 40 tags",
+    }
+  };
+
+  const selectedConstraint = promptConstraints[length];
+
   const prompt = `
 You are an expert image analyst. Your task is to generate a concise title and relevant tags for the provided image.
 
@@ -32,14 +49,14 @@ Respond ONLY with a valid JSON object. Do not include any other text, explanatio
 
 The JSON object must have the following structure:
 {
-  "name": "A descriptive title for the image, strictly between 2 and 4 words long.",
-  "tags": ["tag1", "tag2", "tag3", "tag4", "tag5", "tag6"]
+  "name": "A descriptive title for the image, ${selectedConstraint.name}.",
+  "tags": ["tag1", "tag2", "...", "tagN"]
 }
 
 Rules for the JSON response:
-1. The "name" field must be a string containing 2 to 4 words.
+1. The "name" field must be a string that is ${selectedConstraint.name}.
 2. The "tags" field must be an array of strings.
-3. The "tags" array must contain between 6 and 10 tags.
+3. The "tags" array must contain ${selectedConstraint.tags}.
 4. Each tag in the array must be a single, lowercase English word.
 5. Tags must not contain any spaces, hyphens, or special characters. They should be simple, descriptive keywords.
 `;

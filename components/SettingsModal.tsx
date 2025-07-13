@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import XIcon from './icons/XIcon';
 
@@ -30,7 +31,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSave, 
       role="dialog"
       aria-modal="true"
     >
-      <div className="bg-brand-surface border border-brand-border rounded-xl shadow-2xl w-full max-w-md m-4 p-6 animate-fade-in-up">
+      <div className="bg-brand-surface/70 backdrop-blur-2xl border border-white/10 rounded-xl shadow-2xl w-full max-w-md m-4 p-6 animate-fade-in-up">
         <div className="flex items-start justify-between">
           <div>
             <h2 id="modal-title" className="text-2xl font-bold text-brand-text">API Key Settings</h2>
@@ -54,7 +55,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSave, 
             type="password"
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
-            className="w-full bg-slate-900/70 border border-brand-border rounded-md px-3 py-2 text-brand-text placeholder-brand-text-secondary focus:outline-none focus:ring-2 focus:ring-brand-primary"
+            className="w-full bg-brand-surface-light border border-brand-border rounded-md px-3 py-2 text-brand-text placeholder-brand-text-secondary focus:outline-none focus:ring-2 focus:ring-brand-primary"
             placeholder="Enter your API key here"
           />
         </div>
@@ -63,7 +64,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSave, 
           <button
             onClick={handleSave}
             disabled={!inputValue}
-            className="bg-brand-primary text-white font-bold py-2 px-6 rounded-lg shadow-primary hover:bg-brand-primary-hover transition-all duration-300 disabled:bg-slate-600 disabled:shadow-none disabled:cursor-not-allowed"
+            className="bg-brand-primary text-white font-bold py-2 px-6 rounded-lg shadow-primary hover:bg-brand-primary-hover transition-all duration-300 disabled:bg-brand-surface-lighter disabled:text-brand-text-secondary disabled:shadow-none disabled:cursor-not-allowed"
           >
             Save
           </button>

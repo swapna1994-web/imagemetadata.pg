@@ -52,7 +52,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ onImageChange, imagePrevi
   
   return (
     <div
-      className={`relative border-2 border-dashed rounded-lg p-2 text-center transition-all duration-300 group cursor-pointer aspect-video flex flex-col items-center justify-center bg-slate-900/50
+      className={`relative border-2 border-dashed rounded-lg p-2 text-center transition-all duration-300 group cursor-pointer aspect-video flex flex-col items-center justify-center bg-brand-surface-light
         ${isDragging ? 'border-brand-primary scale-105' : 'border-brand-border hover:border-brand-primary'}`}
       onDrop={handleDrop}
       onDragOver={handleDragOver}
@@ -70,7 +70,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ onImageChange, imagePrevi
       {imagePreviewUrl ? (
         <>
           <img src={imagePreviewUrl} alt="Preview" className="absolute inset-0 w-full h-full object-cover rounded-md z-0" />
-          <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
+          <div className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
             <span className="text-white font-semibold text-lg">Change Image</span>
           </div>
         </>

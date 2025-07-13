@@ -34,7 +34,7 @@ const MetadataDisplay: React.FC<MetadataDisplayProps> = ({ name, tags }) => {
           <label className="block text-sm font-medium text-brand-text-secondary">Image Name</label>
           <button
             onClick={handleCopyName}
-            className="bg-slate-700 text-brand-text-secondary text-xs font-semibold py-1 px-3 rounded-md hover:bg-slate-600 transition-all duration-200 flex items-center justify-center disabled:opacity-50"
+            className="bg-brand-surface-lighter text-brand-text-secondary text-xs font-semibold py-1 px-3 rounded-md hover:bg-zinc-600 transition-all duration-200 flex items-center justify-center disabled:opacity-50"
             aria-label="Copy image name"
             disabled={nameCopied}
           >
@@ -51,7 +51,7 @@ const MetadataDisplay: React.FC<MetadataDisplayProps> = ({ name, tags }) => {
             )}
           </button>
         </div>
-        <div className="bg-slate-800 p-3 rounded-lg">
+        <div className="bg-brand-surface-light p-3 rounded-lg">
           <h3 className="text-xl font-bold text-brand-text break-words">{name}</h3>
         </div>
       </div>
@@ -62,7 +62,7 @@ const MetadataDisplay: React.FC<MetadataDisplayProps> = ({ name, tags }) => {
           <label className="block text-sm font-medium text-brand-text-secondary">Generated Tags</label>
            <button
             onClick={handleCopyTags}
-            className="bg-slate-700 text-brand-text-secondary text-xs font-semibold py-1 px-3 rounded-md hover:bg-slate-600 transition-all duration-200 flex items-center justify-center disabled:opacity-50"
+            className="bg-brand-surface-lighter text-brand-text-secondary text-xs font-semibold py-1 px-3 rounded-md hover:bg-zinc-600 transition-all duration-200 flex items-center justify-center disabled:opacity-50"
             aria-label="Copy generated tags"
             disabled={tagsCopied}
           >
@@ -79,10 +79,10 @@ const MetadataDisplay: React.FC<MetadataDisplayProps> = ({ name, tags }) => {
             )}
           </button>
         </div>
-        <div className="bg-slate-800 p-3 rounded-lg">
+        <div className="bg-brand-surface-light p-3 rounded-lg">
           <div className="flex flex-wrap gap-2">
             {tags.map((tag, index) => (
-              <span key={index} className="bg-slate-700 text-brand-text text-sm font-medium px-3 py-1 rounded-full">
+              <span key={index} className="bg-brand-surface-lighter text-brand-text text-sm font-medium px-3 py-1 rounded-full transition-colors hover:bg-zinc-600">
                 {tag}
               </span>
             ))}
